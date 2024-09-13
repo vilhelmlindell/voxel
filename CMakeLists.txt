@@ -15,9 +15,21 @@ set(SOURCE
   src/shader.cpp
 )
 
+set(IMGUI_SOURCE 
+  include/imgui/imgui.cpp
+  include/imgui/imgui_demo.cpp
+  include/imgui/imgui_draw.cpp
+  include/imgui/imgui_tables.cpp
+  include/imgui/imgui_widgets.cpp
+  include/imgui/backends/imgui_impl_glfw.cpp
+  include/imgui/backends/imgui_impl_opengl3.cpp
+  include/imgui/misc/cpp/imgui_stdlib.cpp
+)
+
 # Libraries to link against
 set(LIBRARY
   glad
+  imgui
   glfw
   OpenGL::GL
   glm::glm
@@ -30,11 +42,16 @@ find_package(glm REQUIRED)
 
 # Add glad as a C static library and set include directory for glad
 add_library(glad STATIC src/glad.c)
+add_library(imgui STATIC "${IMGUI_SOURCE}")
 
-# Make sure glad can find its header file
+target_include_directories(imgui
+  PRIVATE
+  ${CMAKE_SOURCE_DIR}/include/imgui 
+)
+
 target_include_directories(glad
   PRIVATE
-  ${CMAKE_SOURCE_DIR}/include  # Add the include directory where glad.h is located
+  ${CMAKE_SOURCE_DIR}/include
 )
 
 # Add executable
@@ -53,6 +70,7 @@ set_target_properties(voxel PROPERTIES
 target_include_directories(voxel
   PRIVATE
   ${CMAKE_SOURCE_DIR}/include  # Local include directory
+  ${CMAKE_SOURCE_DIR}/include/imgui  # Local include directory
 )
 
 # Install target

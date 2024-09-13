@@ -19,11 +19,12 @@
           packages = with pkgs; [
             # C++ Compiler is already part of stdenv
             cmake
+            gdb
+
             libGL
             glfw
             stb
             glm
-            gdb
           ];
         };
       };
