@@ -41,7 +41,7 @@ find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
 
 # Add glad as a C static library and set include directory for glad
-add_library(glad STATIC src/glad.c)
+add_library(glad STATIC include/glad/glad.c)
 add_library(imgui STATIC "${IMGUI_SOURCE}")
 
 target_include_directories(imgui
