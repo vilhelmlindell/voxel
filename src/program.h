@@ -1,20 +1,23 @@
 #pragma once
 
+#include "shader.h"
 #include <filesystem>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <string>
+#include "world.h"
+
+namespace fs = std::filesystem;
 
 // NOTE: This assumes that the binary is run from the build folder
-const std::string WORKING_PATH =
-    std::filesystem::current_path().parent_path().string();
-const std::string ASSET_PATH = WORKING_PATH + "/assets/";
+const fs::path WORKING_PATH = fs::current_path().parent_path();
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 class Program {
 public:
+  GLFWwindow *window;
+
   Program();
   ~Program();
 
@@ -23,11 +26,13 @@ public:
   void cleanup();
 
 private:
-  GLFWwindow *window;
+  World<10, 10, 10> world;
+  std::unique_ptr<Shader> shader;
+  unsigned int vbo, vao, ebo, texture;
+  bool show_demo_window = true;
 
   GLFWwindow* initialize_window();
   void initialize_imgui();
   void initialize_buffers();
-  void load_texture();
   void process_input();
 };

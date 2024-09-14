@@ -1,12 +1,12 @@
 #include "shader.h"
 #include <glad/glad.h>
 
-std::string readFile(std::string_view path) {
+std::string readFile(const fs::path& path) {
     std::ifstream shaderFile;
     shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-        shaderFile.open(path.data());
+        shaderFile.open(path.c_str());
         std::stringstream shaderStream;
         shaderStream << shaderFile.rdbuf();
         shaderFile.close();
@@ -18,7 +18,7 @@ std::string readFile(std::string_view path) {
     }
 }
 
-Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) {
+Shader::Shader(const fs::path& vertexPath, const fs::path& fragmentPath) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode = readFile(vertexPath);
     std::string fragmentCode = readFile(fragmentPath);
@@ -40,9 +40,11 @@ Shader::Shader(std::string_view vertexPath, std::string_view fragmentPath) {
 
     // compile shader Program
     ID = glCreateProgram();
+
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
+
     checkCompileErrors(ID, "PROGRAM");
     // delete the shaders as they're linked into our program now and no longer
     // necessary

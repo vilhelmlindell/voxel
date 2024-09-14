@@ -13,6 +13,8 @@ project(voxel
 set(SOURCE 
   src/main.cpp
   src/shader.cpp
+  src/program.cpp
+  src/world.cpp
 )
 
 set(IMGUI_SOURCE 
