@@ -4,6 +4,7 @@
 #include <glm/ext/vector_float3.hpp>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 
 unsigned int load_texture(const std::filesystem::path &path) {
@@ -49,10 +50,14 @@ World<Width, Height, Length>::operator[](const glm::ivec3 &pos) const {
 
 
 template <size_t Width, size_t Height, size_t Length>
-void World<Width, Height, Length>::render() {
+void World<Width, Height, Length>::render(const Camera& camera) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
 
+  camera.get_view_matrix();
+  glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+  glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view_matrix()));
+  glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr();
   shader->use();
   glBindVertexArray(vao);
   glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
@@ -66,7 +71,7 @@ void World<Width, Height, Length>::generate_mesh() {
         glm::ivec3 pos(x, y, z);
         if ((*this)[pos] != BlockID::Empty) {
           for (const Face &face : FACES) {
-            glm::ivec3 adjacent_pos = glm::ivec3(x, y, z) + FACE_VECTORS[face];
+            glm::ivec3 adjacent_pos = glm::ivec3(x, y, z) + FACE_VECTORS[(size_t)face];
             if ((*this)[adjacent_pos] == BlockID::Empty) {
               std::cout << "test" << std::endl;
               generate_face(pos, face);
@@ -119,7 +124,7 @@ void World<Width, Height, Length>::generate_mesh() {
 
 template <size_t Width, size_t Height, size_t Length>
 void World<Width, Height, Length>::generate_face(glm::ivec3 pos, Face face) {
-  glm::vec3 normal = FACE_VECTORS[face]; // Get the normal for the face
+  glm::vec3 normal = FACE_VECTORS[(size_t)face]; // Get the normal for the face
 
   // Texture coordinates (for each vertex of the face)
   const glm::vec2 texCoords[4] = {
@@ -132,7 +137,7 @@ void World<Width, Height, Length>::generate_face(glm::ivec3 pos, Face face) {
   // Iterate over the 4 vertices of the face
   for (int i = 0; i < 4; ++i) {
     const glm::ivec3 &offset =
-        FACE_VERTICES[face][i]; // Get vertex offset for the face
+        FACE_VERTICES[(size_t)face][i]; // Get vertex offset for the face
     glm::vec3 vertex_pos =
         glm::vec3(pos + offset); // Calculate vertex position
 

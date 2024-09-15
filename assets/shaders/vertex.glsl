@@ -5,8 +5,13 @@ layout (location = 2) in vec2 tex_coord;
 
 out vec2 tex_coord_out;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-    gl_Position = vec4(position, 1.0);
+    // the multiplication is read from right to left
+    gl_Position = projection * view * model * vec4(position, 1.0);
     tex_coord_out = tex_coord;
 }
