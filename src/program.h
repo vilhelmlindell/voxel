@@ -2,10 +2,10 @@
 
 #include "camera.h"
 #include "shader.h"
-#include <filesystem>
+#include "world.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "world.h"
+#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -22,7 +22,7 @@ public:
   Program();
   ~Program();
 
-  void update();
+  void update(float delta_time);
   void render();
   void cleanup();
 
@@ -33,13 +33,14 @@ private:
   unsigned int vbo, vao, ebo, texture;
   bool show_demo_window = true;
   bool first_mouse = true;
-  glm::vec2 mouse_pos, last_mouse_pos;
+  glm::vec2 last_mouse_pos;
 
-  GLFWwindow* initialize_window();
+  GLFWwindow *initialize_window();
   void initialize_imgui();
   void initialize_buffers();
   void process_input();
 
-  void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-  void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+  static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+  static void scroll_callback(GLFWwindow *window, double xoffset,
+                              double yoffset);
 };

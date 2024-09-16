@@ -1,6 +1,7 @@
 #include "program.h"
 #include "camera.h"
 
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <memory>
 
@@ -41,9 +42,10 @@ GLFWwindow *Program::initialize_window() {
     std::abort();
   }
   glfwMakeContextCurrent(window);
+  glfwSetWindowUserPointer(window, this);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+  glfwSetScrollCallback(window, scroll_callback);
   glfwSetCursorPosCallback(window, mouse_callback);
-  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   // glad: load all OpenGL function pointers
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -66,12 +68,9 @@ void Program::initialize_imgui() {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
 }
 
-void Program::update() {
-  glfwPollEvents();
+void Program::update(float delta_time) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
-
-  float delta_time = 1.0f;
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     camera.process_keyboard(CameraMovement::Forward, delta_time);
@@ -107,26 +106,26 @@ void Program::render() {
   glfwGetFramebufferSize(window, &display_w, &display_h);
   glViewport(0, 0, display_w, display_h);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-  // glfw: swap buffers and poll IO events (keys pressed/released, mouse
-  // moved etc.)
-  glfwSwapBuffers(window);
 }
 
 void Program::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-    if (first_mouse)
-    {
-        last_mousex = xpos;
-        lasty = ypos;
-        first_mouse = false;
-    }
-  
-    float xoffset = xpos - lastx;
-    float yoffset = lasty - ypos; 
+  Program *program = static_cast<Program *>(glfwGetWindowUserPointer(window));
+
+  glm::vec2 mouse_pos(xpos, ypos);
+
+  if (program->first_mouse) {
+    program->last_mouse_pos = mouse_pos;
+    program->first_mouse = false;
+  }
+
+  glm::vec2 offset = mouse_pos - program->last_mouse_pos;
+
+  program->camera.process_mouse_movement(offset);
 }
 void Program::scroll_callback(GLFWwindow *window, double xoffset,
                               double yoffset) {
-
+  Program *program = static_cast<Program *>(glfwGetWindowUserPointer(window));
+  program->camera.process_mouse_scroll(yoffset);
 }
 
 void Program::cleanup() {
