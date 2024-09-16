@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 #include "shader.h"
 #include <filesystem>
 #include <glad/glad.h>
@@ -27,12 +28,18 @@ public:
 
 private:
   World<10, 10, 10> world;
+  Camera camera;
   std::unique_ptr<Shader> shader;
   unsigned int vbo, vao, ebo, texture;
   bool show_demo_window = true;
+  bool first_mouse = true;
+  glm::vec2 mouse_pos, last_mouse_pos;
 
   GLFWwindow* initialize_window();
   void initialize_imgui();
   void initialize_buffers();
   void process_input();
+
+  void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+  void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };

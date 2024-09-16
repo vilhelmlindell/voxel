@@ -1,4 +1,5 @@
 #include "program.h"
+#include "camera.h"
 
 #include <iostream>
 #include <memory>
@@ -8,6 +9,7 @@
 #include <imgui/imgui.h>
 
 Program::Program() {
+  camera = Camera();
   world = World<10, 10, 10>();
   window = initialize_window();
   initialize_imgui();
@@ -40,6 +42,8 @@ GLFWwindow *Program::initialize_window() {
   }
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+  glfwSetCursorPosCallback(window, mouse_callback);
+  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   // glad: load all OpenGL function pointers
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -67,6 +71,17 @@ void Program::update() {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
+  float delta_time = 1.0f;
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    camera.process_keyboard(CameraMovement::Forward, delta_time);
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    camera.process_keyboard(CameraMovement::Backward, delta_time);
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    camera.process_keyboard(CameraMovement::Left, delta_time);
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    camera.process_keyboard(CameraMovement::Right, delta_time);
+
   // Start the Dear ImGui frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -85,7 +100,7 @@ void Program::render() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  world.render();
+  world.render(camera);
 
   ImGui::Render();
   int display_w, display_h;
@@ -96,6 +111,22 @@ void Program::render() {
   // glfw: swap buffers and poll IO events (keys pressed/released, mouse
   // moved etc.)
   glfwSwapBuffers(window);
+}
+
+void Program::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+    if (first_mouse)
+    {
+        last_mousex = xpos;
+        lasty = ypos;
+        first_mouse = false;
+    }
+  
+    float xoffset = xpos - lastx;
+    float yoffset = lasty - ypos; 
+}
+void Program::scroll_callback(GLFWwindow *window, double xoffset,
+                              double yoffset) {
+
 }
 
 void Program::cleanup() {

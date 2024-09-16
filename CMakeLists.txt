@@ -15,6 +15,7 @@ set(SOURCE
   src/shader.cpp
   src/program.cpp
   src/world.cpp
+  src/camera.cpp
 )
 
 set(IMGUI_SOURCE 

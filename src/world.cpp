@@ -54,10 +54,10 @@ void World<Width, Height, Length>::render(const Camera& camera) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  camera.get_view_matrix();
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
   glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
   glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view_matrix()));
-  glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr();
+  glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
   shader->use();
   glBindVertexArray(vao);
   glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
