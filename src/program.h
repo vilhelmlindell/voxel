@@ -16,31 +16,30 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 class Program {
-public:
-  GLFWwindow *window;
+  public:
+    GLFWwindow* window;
 
-  Program();
-  ~Program();
+    Program();
+    ~Program();
 
-  void update(float delta_time);
-  void render();
-  void cleanup();
+    void update(float delta_time);
+    void render();
+    void cleanup();
 
-private:
-  World<10, 10, 10> world;
-  Camera camera;
-  std::unique_ptr<Shader> shader;
-  unsigned int vbo, vao, ebo, texture;
-  bool show_demo_window = true;
-  bool first_mouse = true;
-  glm::vec2 last_mouse_pos;
+  private:
+    World<10, 10, 10> world;
+    Camera camera;
+    std::unique_ptr<Shader> shader;
+    unsigned int vbo, vao, ebo, texture;
+    bool show_demo_window = true;
+    bool first_mouse = true;
+    glm::vec2 last_mouse_pos;
 
-  GLFWwindow *initialize_window();
-  void initialize_imgui();
-  void initialize_buffers();
-  void process_input();
+    GLFWwindow* initialize_window();
+    void initialize_imgui();
+    void initialize_buffers();
+    void process_input();
 
-  static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-  static void scroll_callback(GLFWwindow *window, double xoffset,
-                              double yoffset);
+    static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+    static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };

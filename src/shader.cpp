@@ -11,10 +11,9 @@ std::string readFile(const fs::path& path) {
         shaderStream << shaderFile.rdbuf();
         shaderFile.close();
         return shaderStream.str();
-    } catch (const std::ifstream::failure &e) {
-        throw std::runtime_error(
-            "Could not read file at path: " + std::string(path) +
-            " because of error: " + e.what());
+    } catch (const std::ifstream::failure& e) {
+        throw std::runtime_error("Could not read file at path: " + std::string(path) +
+                                 " because of error: " + e.what());
     }
 }
 
@@ -26,14 +25,14 @@ Shader::Shader(const fs::path& vertexPath, const fs::path& fragmentPath) {
     unsigned int vertex, fragment;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    const char *vertexSource = vertexCode.c_str();
+    const char* vertexSource = vertexCode.c_str();
     glShaderSource(vertex, 1, &vertexSource, NULL);
     glCompileShader(vertex);
     check_compile_errors(vertex, "VERTEX");
 
     // fragment shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    const char *fragmentSource = fragmentCode.c_str();
+    const char* fragmentSource = fragmentCode.c_str();
     glShaderSource(fragment, 1, &fragmentSource, NULL);
     glCompileShader(fragment);
     check_compile_errors(fragment, "FRAGMENT");
@@ -67,9 +66,8 @@ void Shader::check_compile_errors(unsigned int shader, std::string type) {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "Program linking error of type: " + type + "\n" +
-                             infoLog
-                      << "-----------" << std::endl;
+            std::cout << "Program linking error of type: " + type + "\n" + infoLog << "-----------"
+                      << std::endl;
         }
     }
 }
