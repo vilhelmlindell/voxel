@@ -27,7 +27,7 @@ class Program {
     void cleanup();
 
   private:
-    World<10, 10, 10> world;
+    Chunk world;
     Camera camera;
     std::unique_ptr<Shader> shader;
     unsigned int vbo, vao, ebo, texture;

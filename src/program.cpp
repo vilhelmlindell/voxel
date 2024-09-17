@@ -11,7 +11,7 @@
 
 Program::Program() {
     camera = Camera();
-    world = World<10, 10, 10>();
+    world = Chunk();
     window = initialize_window();
     initialize_imgui();
     world.generate_mesh();
