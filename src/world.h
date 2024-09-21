@@ -50,9 +50,9 @@ template <size_t Width, size_t Height, size_t Length> class World {
 
   private:
     std::unique_ptr<Shader> shader;
-    std::vector<Vertex> vertices;
     unsigned int vbo, vao, ebo, texture;
     std::array<std::array<std::array<BlockID, Length>, Height>, Width> blocks;
+    float vertices[36 * 6];
     // std::unordered_map<glm::vec3, unsigned int> indices_by_vertex;
 };
 

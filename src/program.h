@@ -9,6 +9,7 @@
 
 namespace fs = std::filesystem;
 
+
 // NOTE: This assumes that the binary is run from the build folder
 const fs::path WORKING_PATH = fs::current_path().parent_path();
 

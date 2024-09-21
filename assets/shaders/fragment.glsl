@@ -6,5 +6,7 @@ uniform sampler2D face_texture;
 
 void main()
 {
-    frag_color = texture(face_texture, tex_coord);
+    frag_color = vec4(tex_coord.x, tex_coord.y, 0.0, 1.0);
+    //frag_color = vec4(1.0, 0.0, 0.0, 1.0);
 }
+
