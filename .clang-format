@@ -1,0 +1,29 @@
+---
+Language:        Cpp
+BasedOnStyle:    LLVM
+
+# Basic Formatting Options
+IndentWidth:     4              # Indentation width (default 4 spaces)
+TabWidth:        4              # Width of a tab character (default 4 spaces)
+UseTab:          Never          # Use spaces instead of tabs
+ColumnLimit:     100            # Maximum line width (default is 80)
+AllowShortIfStatementsOnASingleLine: false  # Forces multi-line if statements
+BreakBeforeBraces: Attach        # Attach braces to the same line as function/loop/conditional headers
+
+# Spaces and Linebreaks
+SpaceBeforeParens: ControlStatements  # Space before parentheses in control statements (if, for, while)
+SpaceAfterTemplateKeyword: true      # Space after 'template' keyword
+SpacesInParentheses: false           # No spaces inside parentheses
+SpacesInSquareBrackets: false        # No spaces inside square brackets
+SpacesInContainerLiterals: false     # No spaces inside braces in container literals (e.g., std::vector<int> v = {1, 2};)
+Cpp11BracedListStyle: true           # Enforces consistent brace style for C++11 initialization lists
+AlwaysBreakAfterReturnType: None     # Do not force a line break after function return types
+
+# Pointer and Reference alignment
+PointerAlignment: Left      # Align pointers to the right of the type (e.g., `int* p`)
+ReferenceAlignment: Left    # Align references to the right of the type (e.g., `int& ref`)
+
+# Include Directives
+SortIncludes: false          # Sort #include directives alphabetically
+IncludeBlocks: Preserve      # Preserve existing blocks of includes (for grouping)
+---
