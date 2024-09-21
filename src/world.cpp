@@ -105,7 +105,7 @@ void World<Width, Height, Length>::generate_mesh() {
     shader = std::make_unique<Shader>(WORKING_PATH / fs::path("assets/shaders/vertex.glsl"),
                                       WORKING_PATH / fs::path("assets/shaders/fragment.glsl"));
 
-    texture = load_texture(WORKING_PATH / fs::path("assets/images/dirt.png"));
+    texture = load_texture(WORKING_PATH / fs::path("assets/textures/stone_bricks.png"));
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);

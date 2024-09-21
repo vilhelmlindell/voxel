@@ -8,9 +8,9 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-const size_t CHUNK_SIZE = 4;
+const size_t CHUNK_SIZE = 101;
 
-enum class BlockID {
+enum class BlockID : uint16_t {
     Empty,
     Grass,
 };
