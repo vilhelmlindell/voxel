@@ -6,11 +6,9 @@
 #include <glm/ext/vector_int3.hpp>
 #include <glm/integer.hpp>
 #include <glm/vec3.hpp>
-#include <iostream>
-#include <unordered_map>
 #include <vector>
 
-const size_t CHUNK_SIZE = 1;
+const size_t CHUNK_SIZE = 4;
 
 enum class BlockID {
     Empty,
@@ -52,7 +50,8 @@ template <size_t Width, size_t Height, size_t Length> class World {
     std::unique_ptr<Shader> shader;
     unsigned int vbo, vao, ebo, texture;
     std::array<std::array<std::array<BlockID, Length>, Height>, Width> blocks;
-    float vertices[36 * 6];
+    std::vector<Vertex> vertices;
+    //float vertices[36 * 6];
     // std::unordered_map<glm::vec3, unsigned int> indices_by_vertex;
 };
 
