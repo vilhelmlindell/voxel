@@ -32,13 +32,15 @@ void World<Width, Height, Length>::generate_mesh() {
                         glm::ivec3 pos(x, y, z);
                         glm::ivec3 adjacent_pos = glm::ivec3(x, y, z) + FACE_VECTORS[(size_t)face];
 
-                        if (is_outside_chunk(adjacent_pos)) {
-                          continue;
-                        }
+                        // if (is_outside_chunk(adjacent_pos)) {
+                        //   continue;
+                        // }
 
-                        //std::cout << glm::to_string(adjacent_pos) << std::endl;
+                        // std::cout << glm::to_string(adjacent_pos) << std::endl;
 
-                        if (get_block(adjacent_pos) == BlockID::Empty) {
+                        if (is_outside_chunk(adjacent_pos) ||
+                            get_block(adjacent_pos) == BlockID::Empty) {
+                            std::cout << "test" << std::endl;
                             generate_face(pos, face);
                         }
                     }
@@ -83,10 +85,9 @@ void World<Width, Height, Length>::generate_mesh() {
 
     GLuint bufferObject;
     glGenBuffers(1, &bufferObject);
-    glBindBuffer(GL_TEXTURE_BUFFER, bufferObject);
-    glBufferData(GL_TEXTURE_BUFFER, Width * Height * Length * sizeof(BlockID), blocks,
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObject); // Change to GL_SHADER_STORAGE_BUFFER
+    glBufferData(GL_SHADER_STORAGE_BUFFER, Width * Height * Length * sizeof(BlockID), blocks,
                  GL_STATIC_DRAW);
-
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
 
     GLuint textureArrayID = load_texture_array({WORKING_PATH / "assets/textures/stone_bricks.png",
@@ -107,14 +108,15 @@ bool World<Width, Height, Length>::is_outside_chunk(size_t x, size_t y, size_t z
     return x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Length;
 }
 
-template <size_t Width, size_t Height, size_t Length> 
+template <size_t Width, size_t Height, size_t Length>
 bool World<Width, Height, Length>::is_outside_chunk(glm::ivec3 pos) {
-    return pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= Width || pos.y >= Height || pos.z >= Length;
+    return pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= Width || pos.y >= Height ||
+           pos.z >= Length;
 }
 
-template <size_t Width, size_t Height, size_t Length> 
+template <size_t Width, size_t Height, size_t Length>
 BlockID& World<Width, Height, Length>::get_block(glm::ivec3 pos) {
-  return blocks[pos.x][pos.y][pos.z];
+    return blocks[pos.x][pos.y][pos.z];
 }
 
 template <size_t Width, size_t Height, size_t Length>

@@ -13,10 +13,11 @@ out vec2 TexCoord;
 
 void main()
 {
-    FragPos = vec3(model * vec4(position, 1.0));
+    //FragPos = vec3(model * vec4(position, 1.0));
+    FragPos = position;
     gl_Position = projection * view * model * vec4(position, 1.0);
 
-    // Generate texture coordinates based on the position
-    // This is a simple mapping, you might want to adjust it based on your needs
-    TexCoord = position.xy;
+    vec3 absNormal = abs(normal);
+
+    TexCoord = (absNormal.z * position.xy + absNormal.x * position.yz + absNormal.y * position.zx);
 }

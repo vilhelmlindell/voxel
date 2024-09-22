@@ -7,11 +7,12 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-const size_t CHUNK_SIZE = 101;
+const size_t CHUNK_SIZE = 2;
 
 enum class BlockID : uint {
     Empty,
     Grass,
+    Stone,
 };
 
 enum class Face : size_t { Up, Down, Right, Left, Front, Back };
