@@ -2,7 +2,6 @@
 #include "shader.h"
 #include "vertex.h"
 #include "camera.h"
-#include <array>
 #include <glm/ext/vector_int3.hpp>
 #include <glm/integer.hpp>
 #include <glm/vec3.hpp>
@@ -10,7 +9,7 @@
 
 const size_t CHUNK_SIZE = 101;
 
-enum class BlockID : uint16_t {
+enum class BlockID : uint {
     Empty,
     Grass,
 };
@@ -37,11 +36,17 @@ class World {
 
     //BlockID& operator[](const glm::ivec3& pos);
     //const BlockID& operator[](const glm::ivec3& pos) const;
-    const BlockID operator[](const glm::ivec3& pos) const;
+    //const BlockID operator[](const glm::ivec3& pos) const;
 
     void generate_mesh();
     void generate_face(glm::ivec3 pos, Face face);
     void render(const Camera& camera);
+
+    bool is_outside_chunk(size_t x, size_t y, size_t z);
+    bool is_outside_chunk(glm::ivec3 pos);
+
+    BlockID& get_block(glm::ivec3);
+    //void set_block(glm::ivec3);
 
     size_t width();
     size_t height();
