@@ -2,9 +2,9 @@
 #include "program.h"
 #include "texture.h"
 #include "vertex.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cstdlib>
-#include <glad/glad.h>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -22,19 +22,6 @@ World<Width, Height, Length>::World() {
         }
     }
 }
-
-// template <size_t Width, size_t Height, size_t Length>
-// BlockID &World<Width, Height, Length>::operator[](const glm::ivec3 &pos) {
-//   return blocks[pos.x][pos.y][pos.z];
-// }
-
-//template <size_t Width, size_t Height, size_t Length>
-//const BlockID World<Width, Height, Length>::operator[](const glm::ivec3& pos) const {
-//    if (pos.x >= Width || pos.y >= Height || pos.z >= Length || pos.x < 0 || pos.y < 0 || pos.z < 0)
-//        return BlockID::Empty;
-//
-//    return blocks[pos.x][pos.y][pos.z];
-//}
 
 template <size_t Width, size_t Height, size_t Length>
 void World<Width, Height, Length>::generate_mesh() {
@@ -89,6 +76,16 @@ void World<Width, Height, Length>::generate_mesh() {
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
     //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
+
+    GLuint textureArrayID = load_texture_array({WORKING_PATH / "assets/textures/stone_bricks.png", WORKING_PATH / "assets/textures/dirt.png"});;
+    GLuint textureUnit = 0;
+
+    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayID);
+    
+    glUseProgram(shader->ID);
+    GLint texArrayUniform = glGetUniformLocation(shader->ID, "textureArray");
+    glUniform1i(texArrayUniform, textureUnit);
 }
 
 template <size_t Width, size_t Height, size_t Length>
