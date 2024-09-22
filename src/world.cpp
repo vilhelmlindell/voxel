@@ -1,5 +1,6 @@
 #include "world.h"
 #include "program.h"
+#include "texture.h"
 #include "vertex.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
@@ -8,56 +9,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <stb/stb_image.h>
-
-unsigned int load_texture(const std::filesystem::path& path) {
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST); // Mipmap filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // Load image, create texture and generate mipmaps
-    int width, height, channels;
-    stbi_set_flip_vertically_on_load(true); // Flip loaded texture's y-axis
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-
-    if (!data) {
-        std::cout << "Unable to load image: " << stbi_failure_reason() << "\n";
-        std::abort();
-    }
-
-    GLenum internalFormat;
-    GLenum format;
-
-    if (channels == 1) {
-        internalFormat = GL_RED;
-        format = GL_RED;
-    } else if (channels == 3) {
-        internalFormat = GL_RGB;
-        format = GL_RGB;
-    } else if (channels == 4) {
-        internalFormat = GL_RGBA;
-        format = GL_RGBA;
-    }
-
-    // Upload texture to the GPU
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(data);
-
-    return texture;
-}
-
 template class World<CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE>;
 
-template <size_t Width, size_t Height, size_t Length> World<Width, Height, Length>::World() {
+template <size_t Width, size_t Height, size_t Length> 
+World<Width, Height, Length>::World() {
     for (size_t x = 0; x < Width; ++x) {
         for (size_t y = 0; y < Height; ++y) {
             for (size_t z = 0; z < Length; ++z) {
@@ -73,13 +28,13 @@ template <size_t Width, size_t Height, size_t Length> World<Width, Height, Lengt
 //   return blocks[pos.x][pos.y][pos.z];
 // }
 
-template <size_t Width, size_t Height, size_t Length>
-const BlockID World<Width, Height, Length>::operator[](const glm::ivec3& pos) const {
-    if (pos.x >= Width || pos.y >= Height || pos.z >= Length || pos.x < 0 || pos.y < 0 || pos.z < 0)
-        return BlockID::Empty;
-
-    return blocks[pos.x][pos.y][pos.z];
-}
+//template <size_t Width, size_t Height, size_t Length>
+//const BlockID World<Width, Height, Length>::operator[](const glm::ivec3& pos) const {
+//    if (pos.x >= Width || pos.y >= Height || pos.z >= Length || pos.x < 0 || pos.y < 0 || pos.z < 0)
+//        return BlockID::Empty;
+//
+//    return blocks[pos.x][pos.y][pos.z];
+//}
 
 template <size_t Width, size_t Height, size_t Length>
 void World<Width, Height, Length>::generate_mesh() {
@@ -87,11 +42,11 @@ void World<Width, Height, Length>::generate_mesh() {
       for (size_t y = 0; y < Height; y++) {
         for (size_t z = 0; z < Length; z++) {
           glm::ivec3 pos(x, y, z);
-          if ((*this)[pos] != BlockID::Empty) {
+          if (blocks[x][y][z] != BlockID::Empty) {
             for (const Face &face : FACES) {
               glm::ivec3 adjacent_pos =
                   glm::ivec3(x, y, z) + FACE_VECTORS[(size_t)face];
-              if ((*this)[adjacent_pos] == BlockID::Empty) {
+              if (blocks[adjacent_pos.x][adjacent_pos.y][adjacent_pos.z] == BlockID::Empty) {
                 generate_face(pos, face);
               }
             }
@@ -126,6 +81,11 @@ void World<Width, Height, Length>::generate_mesh() {
 
     shader->use();
     glUniform1i(glGetUniformLocation(shader->ID, "face_texture"), 0);
+
+    GLuint bufferObject;
+    glGenBuffers(1, &bufferObject);
+    glBindBuffer(GL_TEXTURE_BUFFER, bufferObject);
+    glBufferData(GL_TEXTURE_BUFFER, blocks * sizeof(BlockID), blocks, GL_STATIC_DRAW);
 }
 
 template <size_t Width, size_t Height, size_t Length>

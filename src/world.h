@@ -30,7 +30,8 @@ const glm::ivec3 FACE_VERTICES[6][4] = {
     {glm::ivec3(0, 0, 0), glm::ivec3(1, 0, 0), glm::ivec3(0, 1, 0), glm::ivec3(1, 1, 0)}, // Back
 };
 
-template <size_t Width, size_t Height, size_t Length> class World {
+template <size_t Width, size_t Height, size_t Length> 
+class World {
   public:
     World();
 
@@ -49,7 +50,7 @@ template <size_t Width, size_t Height, size_t Length> class World {
   private:
     std::unique_ptr<Shader> shader;
     unsigned int vbo, vao, ebo, texture;
-    std::array<std::array<std::array<BlockID, Length>, Height>, Width> blocks;
+    BlockID blocks[Width][Height][Length];
     std::vector<Vertex> vertices;
     //float vertices[36 * 6];
     // std::unordered_map<glm::vec3, unsigned int> indices_by_vertex;
