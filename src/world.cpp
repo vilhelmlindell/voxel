@@ -85,7 +85,10 @@ void World<Width, Height, Length>::generate_mesh() {
     GLuint bufferObject;
     glGenBuffers(1, &bufferObject);
     glBindBuffer(GL_TEXTURE_BUFFER, bufferObject);
-    glBufferData(GL_TEXTURE_BUFFER, blocks * sizeof(BlockID), blocks, GL_STATIC_DRAW);
+    glBufferData(GL_TEXTURE_BUFFER, Width * Height * Length * sizeof(BlockID), blocks, GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
+    //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
 }
 
 template <size_t Width, size_t Height, size_t Length>

@@ -16,6 +16,7 @@ set(SOURCE
   src/program.cpp
   src/world.cpp
   src/camera.cpp
+  src/texture.cpp
 )
 
 set(IMGUI_SOURCE 

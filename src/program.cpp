@@ -14,6 +14,19 @@ Program::Program() {
     window = initialize_window();
     initialize_imgui();
     world.generate_mesh();
+
+    //std::cout << "- Shading Language = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    //std::cout << "- Version = " << glGetString(GL_VERSION) << std::endl;
+    //std::cout << "- Vendor = " << glGetString(GL_VENDOR) << std::endl;
+    //std::cout << "- Renderer = " << glGetString(GL_RENDERER) << std::endl << std::endl;
+
+    //GLint numExtensions;
+    //glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+    //std::cout << "- Extensions" << std::endl;
+    //for (GLint i = 0; i < numExtensions; i++)
+    //{
+    //    std::cout << glGetStringi(GL_EXTENSIONS, i) << std::endl;
+    //}
 }
 
 Program::~Program() { cleanup(); }
@@ -29,8 +42,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 GLFWwindow* Program::initialize_window() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);

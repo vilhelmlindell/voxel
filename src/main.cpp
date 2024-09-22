@@ -12,7 +12,7 @@ int main() {
     Program program = Program();
     float delta_time = 0.0f; // Time between current frame and last frame
     float last_frame = 0.0f; // Time of last frame
-                             //
+                             
     while (!glfwWindowShouldClose(program.window)) {
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
