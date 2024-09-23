@@ -65,6 +65,10 @@ void Camera::process_mouse_scroll(float yoffset) {
         zoom = 45.0f;
 }
 
+void Camera::update_projection_matrix(float aspect_ratio) {
+  projection_matrix = glm::perspective(glm::radians(FOV), aspect_ratio, ZNEAR, ZFAR);
+}
+
 // Update camera vectors based on the current yaw and pitch
 void Camera::update_camera_vectors() {
     // Calculate the new Front vector

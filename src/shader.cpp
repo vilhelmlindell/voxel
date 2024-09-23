@@ -24,8 +24,10 @@ Shader::Shader(const fs::path& vertexPath, const fs::path& fragmentPath) {
 
     unsigned int vertex, fragment;
     // vertex shader
+
     vertex = glCreateShader(GL_VERTEX_SHADER);
     const char* vertexSource = vertexCode.c_str();
+
     glShaderSource(vertex, 1, &vertexSource, NULL);
     glCompileShader(vertex);
     check_compile_errors(vertex, "VERTEX");
@@ -72,13 +74,13 @@ void Shader::check_compile_errors(unsigned int shader, std::string type) {
     }
 }
 
-void Shader::use() { glUseProgram(ID); }
-void Shader::set_bool(std::string_view name, bool value) {
-    glUniform1i(glGetUniformLocation(ID, name.data()), (int)value);
-}
-void Shader::set_int(std::string_view name, int value) {
-    glUniform1i(glGetUniformLocation(ID, name.data()), value);
-}
-void Shader::set_float(std::string_view name, float value) {
-    glUniform1i(glGetUniformLocation(ID, name.data()), value);
-}
+//void Shader::use() { glUseProgram(ID); }
+//void Shader::set_bool(std::string_view name, bool value) {
+//    glUniform1i(glGetUniformLocation(ID, name.data()), (int)value);
+//}
+//void Shader::set_int(std::string_view name, int value) {
+//    glUniform1i(glGetUniformLocation(ID, name.data()), value);
+//}
+//void Shader::set_float(std::string_view name, float value) {
+//    glUniform1i(glGetUniformLocation(ID, name.data()), value);
+//}

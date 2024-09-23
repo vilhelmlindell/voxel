@@ -1,4 +1,4 @@
-#include "world.h"
+#include "chunk.h"
 #include "program.h"
 #include "texture.h"
 #include "vertex.h"
@@ -9,24 +9,25 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <stb/stb_image.h>
-template class World<CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE>;
 
-template <size_t Width, size_t Height, size_t Length> World<Width, Height, Length>::World() {
-    for (size_t x = 0; x < Width; ++x) {
-        for (size_t y = 0; y < Height; ++y) {
-            for (size_t z = 0; z < Length; ++z) {
+Chunk::Chunk() {
+    for (size_t x = 0; x < WIDTH; ++x) {
+        for (size_t y = 0; y < HEIGHT; ++y) {
+            for (size_t z = 0; z < LENGTH; ++z) {
+                BlockID block = BlockID::Grass;
+                if (x % 2 == 0 || y % 2 == 0 || z % 2 == 0)
+                  block = BlockID::Stone;
                 // Access the block at (x, y, z)
-                blocks[x][y][z] = BlockID::Grass; // Example: Set all blocks to Grass
+                blocks[x][y][z] = block; // Example: Set all blocks to Grass
             }
         }
     }
 }
 
-template <size_t Width, size_t Height, size_t Length>
-void World<Width, Height, Length>::generate_mesh() {
-    for (size_t x = 0; x < Width; x++) {
-        for (size_t y = 0; y < Height; y++) {
-            for (size_t z = 0; z < Length; z++) {
+void Chunk::generate_mesh() {
+    for (size_t x = 0; x < WIDTH; x++) {
+        for (size_t y = 0; y < HEIGHT; y++) {
+            for (size_t z = 0; z < LENGTH; z++) {
                 if (blocks[x][y][z] != BlockID::Empty) {
                     for (const Face& face : FACES) {
                         glm::ivec3 pos(x, y, z);
@@ -40,7 +41,6 @@ void World<Width, Height, Length>::generate_mesh() {
 
                         if (is_outside_chunk(adjacent_pos) ||
                             get_block(adjacent_pos) == BlockID::Empty) {
-                            std::cout << "test" << std::endl;
                             generate_face(pos, face);
                         }
                     }
@@ -53,8 +53,6 @@ void World<Width, Height, Length>::generate_mesh() {
 
     shader = std::make_unique<Shader>(WORKING_PATH / fs::path("assets/shaders/vertex.glsl"),
                                       WORKING_PATH / fs::path("assets/shaders/fragment.glsl"));
-
-    texture = load_texture(WORKING_PATH / fs::path("assets/textures/stone_bricks.png"));
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -79,14 +77,14 @@ void World<Width, Height, Length>::generate_mesh() {
 
     shader->use();
 
-    glm::ivec3 chunkSize(Width, Height, Length);
+    glm::ivec3 chunkSize(WIDTH, HEIGHT, LENGTH);
     GLint chunkSizeLocation = glGetUniformLocation(shader->ID, "chunkSize");
     glUniform3iv(chunkSizeLocation, 1, glm::value_ptr(chunkSize));
 
     GLuint bufferObject;
     glGenBuffers(1, &bufferObject);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObject); // Change to GL_SHADER_STORAGE_BUFFER
-    glBufferData(GL_SHADER_STORAGE_BUFFER, Width * Height * Length * sizeof(BlockID), blocks,
+    glBufferData(GL_SHADER_STORAGE_BUFFER, WIDTH * HEIGHT * LENGTH * sizeof(BlockID), blocks,
                  GL_STATIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObject);
 
@@ -103,24 +101,20 @@ void World<Width, Height, Length>::generate_mesh() {
     glUniform1i(texArrayUniform, textureUnit);
 }
 
-template <size_t Width, size_t Height, size_t Length>
-bool World<Width, Height, Length>::is_outside_chunk(size_t x, size_t y, size_t z) {
-    return x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Length;
+bool Chunk::is_outside_chunk(size_t x, size_t y, size_t z) {
+    return x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= LENGTH;
 }
 
-template <size_t Width, size_t Height, size_t Length>
-bool World<Width, Height, Length>::is_outside_chunk(glm::ivec3 pos) {
-    return pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= Width || pos.y >= Height ||
-           pos.z >= Length;
+bool Chunk::is_outside_chunk(glm::ivec3 pos) {
+    return pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= WIDTH || pos.y >= HEIGHT ||
+           pos.z >= LENGTH;
 }
 
-template <size_t Width, size_t Height, size_t Length>
-BlockID& World<Width, Height, Length>::get_block(glm::ivec3 pos) {
+BlockID& Chunk::get_block(glm::ivec3 pos) {
     return blocks[pos.x][pos.y][pos.z];
 }
 
-template <size_t Width, size_t Height, size_t Length>
-void World<Width, Height, Length>::generate_face(glm::ivec3 pos, Face face) {
+void Chunk::generate_face(glm::ivec3 pos, Face face) {
     glm::vec3 normal = FACE_VECTORS[(size_t)face]; // Get the normal for the face
 
     Vertex face_vertices[4];
@@ -143,35 +137,35 @@ void World<Width, Height, Length>::generate_face(glm::ivec3 pos, Face face) {
     vertices.push_back(face_vertices[1]);
 }
 
-template <size_t Width, size_t Height, size_t Length>
-void World<Width, Height, Length>::render(const Camera& camera) {
+void Chunk::render(const Camera& camera) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader->use();
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    //glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 10000.0f);
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE,
                        glm::value_ptr(glm::mat4(1.0f)));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, GL_FALSE,
                        glm::value_ptr(camera.get_view_matrix()));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE,
-                       glm::value_ptr(projection));
+                       glm::value_ptr(camera.projection_matrix));
+
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
 
-template <size_t Width, size_t Height, size_t Length> size_t World<Width, Height, Length>::width() {
-    return Width;
+size_t Chunk::width() {
+    return WIDTH;
 }
 
-template <size_t Width, size_t Height, size_t Length>
-size_t World<Width, Height, Length>::height() {
-    return Height;
+size_t Chunk::height() {
+    return HEIGHT;
 }
 
-template <size_t Width, size_t Height, size_t Length>
-size_t World<Width, Height, Length>::length() {
-    return Length;
+size_t Chunk::length() {
+    return LENGTH;
 }

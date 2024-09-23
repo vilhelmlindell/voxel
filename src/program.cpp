@@ -7,46 +7,33 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
+#include <memory>
 
 Program::Program() {
+    window = init_window();
+    init_imgui();
+
     camera = Camera();
-    world = Chunk();
-    window = initialize_window();
-    initialize_imgui();
-    world.generate_mesh();
 
-    //std::cout << "- Shading Language = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    //std::cout << "- Version = " << glGetString(GL_VERSION) << std::endl;
-    //std::cout << "- Vendor = " << glGetString(GL_VENDOR) << std::endl;
-    //std::cout << "- Renderer = " << glGetString(GL_RENDERER) << std::endl << std::endl;
+    world = std::make_unique<ChunkPool>(1000);
 
-    //GLint numExtensions;
-    //glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-    //std::cout << "- Extensions" << std::endl;
-    //for (GLint i = 0; i < numExtensions; i++)
-    //{
-    //    std::cout << glGetStringi(GL_EXTENSIONS, i) << std::endl;
-    //}
+    for (size_t x = 0; x < 30; x++) {
+        for (size_t z = 0; z < 30; z++) {
+            world->load_chunk(glm::ivec3(x, 0, z));
+        }
+    }
 }
 
 Program::~Program() { cleanup(); }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback
-// function executes
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    // make sure the viewport matches the new window dimensions; note that width
-    // and height will be significantly larger than specified on retina
-    // displays.
-    glViewport(0, 0, width, height);
-}
 
-GLFWwindow* Program::initialize_window() {
+GLFWwindow* Program::init_window() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -67,7 +54,7 @@ GLFWwindow* Program::initialize_window() {
 
     return window;
 }
-void Program::initialize_imgui() {
+void Program::init_imgui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -109,7 +96,7 @@ void Program::render() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    world.render(camera);
+    world->render(camera);
 
     ImGui::Render();
     int display_w, display_h;
@@ -118,6 +105,19 @@ void Program::render() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+
+// glfw: whenever the window size changed (by OS or user resize) this callback
+// function executes
+void Program::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    Program* program = static_cast<Program*>(glfwGetWindowUserPointer(window));
+
+    // make sure the viewport matches the new window dimensions; note that width
+    // and height will be significantly larger than specified on retina
+    // displays.
+    glViewport(0, 0, width, height);
+
+    program->camera.update_projection_matrix((float)width / (float)height);
+}
 void Program::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     Program* program = static_cast<Program*>(glfwGetWindowUserPointer(window));
 
@@ -139,10 +139,6 @@ void Program::scroll_callback(GLFWwindow* window, double xoffset, double yoffset
 }
 
 void Program::cleanup() {
-    // optional: de-allocate all resources once they've outlived their purpose:
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-
     // glfw: terminate, clearing all previously allocated GLFW resources.
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

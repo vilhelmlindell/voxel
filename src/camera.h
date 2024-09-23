@@ -13,6 +13,9 @@ const float PITCH = 0.0f;
 const float SPEED = 10.0f;
 const float SENSITIVITY = 0.2f;
 const float ZOOM = 45.0f;
+const float FOV = 45.0f;
+const float ZNEAR = 0.1f;
+const float ZFAR = 10000.0f;
 
 // An abstract camera class that processes input and calculates the
 // corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -24,6 +27,7 @@ class Camera {
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 world_up;
+    glm::mat4 projection_matrix;
     // euler Angles
     float yaw;
     float pitch;
@@ -49,6 +53,8 @@ class Camera {
 
     // Process mouse scroll input
     void process_mouse_scroll(float yoffset);
+
+    void update_projection_matrix(float aspect_ratio);
 
   private:
     void update_camera_vectors();

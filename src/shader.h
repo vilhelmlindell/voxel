@@ -12,10 +12,10 @@ class Shader {
   public:
     unsigned int ID;
     Shader(const fs::path& vertexPath, const fs::path& fragmentPath);
-    void use();
-    void set_bool(std::string_view name, bool value);
-    void set_int(std::string_view name, int value);
-    void set_float(std::string_view name, float value);
+    //void use();
+    //void set_bool(std::string_view name, bool value);
+    //void set_int(std::string_view name, int value);
+    //void set_float(std::string_view name, float value);
 
   private:
     void check_compile_errors(unsigned int shader, std::string type);

@@ -14,9 +14,10 @@ set(SOURCE
   src/main.cpp
   src/shader.cpp
   src/program.cpp
-  src/world.cpp
   src/camera.cpp
   src/texture.cpp
+  src/chunk.cpp
+  src/chunk_pool.cpp
 )
 
 set(IMGUI_SOURCE 
