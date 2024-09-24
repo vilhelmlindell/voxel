@@ -31,16 +31,18 @@ void Chunk::init_buffers() {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     // Define the vertex attribute pointers (position, normal, texture coordinates)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
 
     // Generate and bind Shader Storage Buffer Object (SSBO) for block data
     glGenBuffers(1, &blocks_buffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, blocks_buffer);
-    
+
     // Bind the SSBO to binding point 0 (must match the layout in your shader)
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, blocks_buffer);
 
@@ -70,7 +72,8 @@ void Chunk::generate_mesh() {
     // Ensure VAO and VBO are bound before updating buffer data
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(),
+                 GL_STATIC_DRAW);
 
     // Bind blocks buffer and upload block data
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, blocks_buffer);
@@ -104,7 +107,15 @@ void Chunk::generate_face(glm::ivec3 pos, Face face) {
     vertices.push_back(face_vertices[1]);
 }
 
-BlockID& Chunk::get_block(glm::ivec3 pos) { return blocks[pos.x][pos.y][pos.z]; }
+BlockID Chunk::get_block(glm::ivec3 pos) const { return blocks[pos.x][pos.y][pos.z]; }
+void Chunk::set_block(glm::ivec3 pos, BlockID value) const {
+    if (value == BlockID::Empty) {
+    } else {
+      for (Face face : FACES) {
+        glm::ivec3 adjacent_pos = pos + FACE_VECTORS[(size_t)face];
+      }
+    }
+}
 
 bool Chunk::is_outside_chunk(size_t x, size_t y, size_t z) {
     return x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= LENGTH;

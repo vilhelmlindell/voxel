@@ -41,7 +41,7 @@ class Chunk {
     static const size_t LENGTH = CHUNK_SIZE;
 
     BlockID blocks[WIDTH][HEIGHT][LENGTH];
-    BitArray binary_faces[6]
+    BitArray binary_faces[6][CHUNK_SIZE][CHUNK_SIZE];
     GLuint vbo, vao, ebo, blocks_buffer;
     std::vector<Vertex> vertices, indices;
 
@@ -52,7 +52,8 @@ class Chunk {
     void generate_mesh();
     void generate_face(glm::ivec3 pos, Face face);
 
-    BlockID& get_block(glm::ivec3);
+    BlockID get_block(glm::ivec3 pos) const;
+    void set_block(glm::ivec3 pos, BlockID value);
 
     bool is_outside_chunk(size_t x, size_t y, size_t z);
     bool is_outside_chunk(glm::ivec3 pos);
