@@ -1,5 +1,8 @@
 #pragma once
+#include "camera.h"
 #include "chunk.h"
+#include "shader.h"
+#include <memory>
 #include <queue>
 #include <unordered_map>
 
@@ -30,9 +33,6 @@ public:
     void unload_chunk(glm::ivec3 pos);
 
     void render(const Camera& camera);
-
-    //void allocate_chunk(Chunk chunk);
-    //void deallocate_chunk(Chunk* chunk);
 
     Chunk* pool;
     std::queue<Chunk*> free_chunks;

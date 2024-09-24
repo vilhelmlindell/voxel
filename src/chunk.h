@@ -1,7 +1,6 @@
 #pragma once
-#include "shader.h"
+#include "glad/glad.h"
 #include "vertex.h"
-#include "camera.h"
 #include <cstdint>
 #include <glm/ext/vector_int3.hpp>
 #include <glm/integer.hpp>
@@ -10,7 +9,7 @@
 
 struct ChunkPool;
 
-enum class BlockID : uint64_t {
+enum class BlockID : uint32_t {
     Empty,
     Grass,
     Stone,
@@ -42,6 +41,7 @@ class Chunk {
     static const size_t LENGTH = CHUNK_SIZE;
 
     BlockID blocks[WIDTH][HEIGHT][LENGTH];
+    BitArray binary_faces[6]
     GLuint vbo, vao, ebo, blocks_buffer;
     std::vector<Vertex> vertices, indices;
 

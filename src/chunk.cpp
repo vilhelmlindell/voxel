@@ -13,15 +13,11 @@ Chunk::Chunk(ChunkPool& chunk_pool) {
         for (size_t y = 0; y < HEIGHT; ++y) {
             for (size_t z = 0; z < LENGTH; ++z) {
                 BlockID block = BlockID::Grass;
-                if (x % 2 == 0) {
-                    block = BlockID::Stone;
-                }
                 // Access the block at (x, y, z)
                 blocks[x][y][z] = block; // Example: Set all blocks to Grass
             }
         }
     }
-    blocks[0][0][0] = BlockID::Stone;
     init_buffers();
 }
 
