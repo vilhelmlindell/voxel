@@ -41,6 +41,7 @@ class Chunk {
     static const size_t LENGTH = CHUNK_SIZE;
 
     BlockID blocks[WIDTH][HEIGHT][LENGTH];
+    BitArray solid_blocks[WIDTH][LENGTH];
     BitArray binary_faces[6][CHUNK_SIZE][CHUNK_SIZE];
     GLuint vbo, vao, ebo, blocks_buffer;
     std::vector<Vertex> vertices, indices;

@@ -108,13 +108,8 @@ void Chunk::generate_face(glm::ivec3 pos, Face face) {
 }
 
 BlockID Chunk::get_block(glm::ivec3 pos) const { return blocks[pos.x][pos.y][pos.z]; }
-void Chunk::set_block(glm::ivec3 pos, BlockID value) const {
-    if (value == BlockID::Empty) {
-    } else {
-      for (Face face : FACES) {
-        glm::ivec3 adjacent_pos = pos + FACE_VECTORS[(size_t)face];
-      }
-    }
+void Chunk::set_block(glm::ivec3 pos, BlockID value)  {
+  solid_blocks[pos.x][pos.z] |= 1 << pos.y;
 }
 
 bool Chunk::is_outside_chunk(size_t x, size_t y, size_t z) {
